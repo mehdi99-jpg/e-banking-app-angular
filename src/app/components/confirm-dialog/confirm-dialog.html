@@ -1,0 +1,24 @@
+@if (isOpen) {
+  <div class="modal-backdrop">
+    <div class="modal-card fade-in">
+      <div class="modal-header">
+        <h3 class="modal-title">{{ title }}</h3>
+        <button class="close-btn" (click)="onCancel()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <p class="modal-text">{{ message }}</p>
+      </div>
+      
+      <div class="modal-footer">
+        <button class="btn btn-outline" (click)="onCancel()">Cancel</button>
+        <button class="btn btn-danger" (click)="onConfirm()">Confirm</button>
+      </div>
+    </div>
+  </div>
+}

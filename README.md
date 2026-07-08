@@ -1,151 +1,190 @@
-# Digital Banking Application - Frontend Client
+# Digital Banking Application (Frontend)
 
 Developed by **HYNDI ELMEHDI**
 
-A modern, high-performance web interface for the Digital Banking Application. This client is built using Angular 21 with Standalone Components, reactive state management via Signals, and a bespoke CSS design system. It handles real-time data fetching, reactive form validations, dynamic theme styling, and responsive layout adjustments.
+A clean, modern, and high-performance Digital Banking Frontend built on top of Angular 21 and styled with a custom CSS Design System. The application features real-time client-side rendering (SPA), reactive form validations, loading states, a toast notification system, and fully responsive layouts.
 
 ---
 
-## Technical Stack
+## Architecture Design
 
-* **Framework**: Angular 21 (Standalone Architecture)
-* **State Management**: Angular Signals and Computeds
-* **Styling**: Custom CSS Design System (no TailwindCSS or CSS frameworks)
-* **Http Client**: RxJS Observables and HttpClient
-* **Build Engine**: Vite and Angular CLI Build Pipeline
+The application follows a structured, clean-architecture pattern separating model schemas, service layers, reusable UI presentation components, and layout views.
 
----
-
-## Project Structure
-
-The project directory is structured as follows to ensure separation of concerns:
+### File Structure Map
 
 ```text
 src/
 ├── app/
-│   ├── components/            # Reusable UI presentation layers
-│   │   ├── confirm-dialog/    # Pop-up modal for action approvals
-│   │   ├── loading-spinner/   # Indeterminate progress spinner
-│   │   ├── navbar/            # Global navigation header
-│   │   ├── sidebar/           # Left drawer navigation
-│   │   └── toast-notification/# System status overlay manager
+│   ├── components/            # Reusable & Shared Components
+│   │   ├── confirm-dialog/    # Modal dialog for critical operations
+│   │   ├── loading-spinner/   # Spinner component for async requests
+│   │   ├── navbar/            # Global header dashboard navbar
+│   │   ├── sidebar/           # Left navigation bar
+│   │   └── toast-notification/# Floating toast alerts
 │   │
-│   ├── models/                # TypeScript schemas and data definitions
+│   ├── models/                # Type Definitions & Data Structures
 │   │   ├── customer.model.ts
-│   │   ├── bank-account.model.ts (Polymorphic account hierarchy)
+│   │   ├── bank-account.model.ts (Current & Saving polymorphism)
 │   │   ├── account-operation.model.ts
-│   │   ├── account-history.model.ts (Paginated transaction definitions)
-│   │   ├── transaction.model.ts (Form request payloads)
+│   │   ├── account-history.model.ts (Paginated transaction lists)
+│   │   ├── transaction.model.ts (Requests for credit, debit, transfer)
 │   │   ├── account-status.enum.ts
 │   │   └── operation-type.enum.ts
 │   │
-│   ├── services/              # Business logic services and REST APIs
+│   ├── services/              # Business Logic & API Layer
 │   │   ├── customer.service.ts
 │   │   ├── account.service.ts
-│   │   └── toast.service.ts   # Signal-based toast publisher
+│   │   └── toast.service.ts
 │   │
-│   ├── pages/                 # Routing view controllers
-│   │   ├── dashboard/         # Stat telemetry widgets
-│   │   ├── customers/         # Customer directory and profile modifications
-│   │   ├── accounts/          # Account detail profiles and paginated history
-│   │   └── transactions/      # Financial processing (Debit, Credit, Transfer)
+│   ├── pages/                 # Main Page/View Controllers
+│   │   ├── dashboard/         # Stat widgets & app telemetry dashboard
+│   │   ├── customers/         # Customer Management (List, Add, Edit)
+│   │   ├── accounts/          # Account Details & Paginated Transactions
+│   │   └── transactions/      # Financial Operations (Debit, Credit, Transfer)
 │   │
-│   ├── app.config.ts          # Core application providers and settings
-│   ├── app.routes.ts          # Angular SPA route registry
-│   └── app.ts                 # Root shell component
+│   ├── app.config.ts          # Core Providers (HTTP Client, Router, SSR)
+│   ├── app.routes.ts          # Page Route Configuration
+│   ├── app.routes.server.ts   # Server Route Render Rules (SSR/Server/Prerender)
+│   └── app.ts                 # Main Shell Component
 │
-├── environments/              # Compilation environment configurations
+├── environments/              # Environments configuration
 │   ├── environment.ts
 │   └── environment.prod.ts
 │
-├── index.html                 # HTML viewport entry point
-└── styles.css                 # Base stylesheet and variables
+├── index.html                 # HTML Shell (Google Fonts Integration)
+└── styles.css                 # Brand Design System Tokens
+```
+
+### Architectural Layout Diagram
+
+```mermaid
+graph TD
+    UI[App Shell Component] --> Sidebar[Sidebar Component]
+    UI --> Navbar[Navbar Component]
+    UI --> PageRouter[Router Outlet]
+    
+    PageRouter --> Dashboard[Dashboard Page]
+    PageRouter --> Customers[Customer Management]
+    PageRouter --> Accounts[Account Directory]
+    PageRouter --> Transactions[Financial Operations]
+
+    subgraph Service Layer (API Communication)
+        Customers --> CustService[CustomerService]
+        Accounts --> AccService[AccountService]
+        Transactions --> AccService
+    end
+
+    subgraph Core Configuration (Environment)
+        CustService --> Env[environments.ts]
+        AccService --> Env
+    end
+    
+    subgraph Data Models (Structs & Enums)
+        CustService --> Models[Customer / BankAccount / Transaction Models]
+        AccService --> Models
+    end
+
+    subgraph Utilities (Reusable)
+        Pages[All Pages] --> Spinner[LoadingSpinner Component]
+        Pages --> Dialog[ConfirmDialog Component]
+        Pages --> Toast[ToastService / ToastNotification]
+    end
 ```
 
 ---
 
-## Core Application Workflows & Interface Snapshots
+## App Workflows & Features
 
-### 1. Account Telemetry Dashboard
-* Aggregates total client count, active bank account counts, and combined deposit balances across the system using RxJS parallel forkJoin requests.
-* Provides recent transaction lists populated from active bank accounts.
-* Integrates quick-access navigation buttons for common bank administrative tasks.
+The digital banking dashboard encompasses five primary workflows, all fully integrated:
 
-![Dashboard Page Interface](snapshots/dashboard.png)
+### 1. Unified Dashboard Insights
+- Displays financial telemetry (total customers, active bank accounts, total savings, and total overdraft limits).
+- Lists quick shortcuts for initiating debits, credits, or transfers.
+- Provides a clean overview of the banking application's distribution.
 
-### 2. Client Profile Management (CRUD)
-* Lists registered clients in a clean tabular layout with client-side name/email filters powered by computed Signals.
-* Provides dynamic inputs validated using Angular Reactive Forms.
-* Restricts critical actions (such as customer deletion) behind confirmation pop-ups before dispatching HTTP calls.
-* Leverages JPA cascade configurations on the backend to automatically delete linked accounts and transaction histories when a customer is removed.
-
-![Customer Directory List](snapshots/customers.png)
-*Figure 2a: Customer listing table with action items.*
-
-![Customer Search Filtering](snapshots/search-customer.png)
-*Figure 2b: Reactive client-side keyword search.*
-
-![Add Customer Form Validation](snapshots/add-new-customer.png)
-*Figure 2c: Reactive Customer registration form showing real-time validation inputs.*
+### 2. Customer Management (CRUD)
+- **Retrieve**: Clean table representation containing customer identifiers, names, and contact details.
+- **Search**: Integrated query filter to retrieve specific clients.
+- **Create**: Add a new customer profile using dynamic reactive validations.
+- **Update**: Pre-filled update forms to modify profile attributes.
+- **Delete**: Protected action with an interactive Confirm Dialog before invoking remote API calls.
 
 ### 3. Bank Account Directory
-* Represents bank accounts as responsive, colored cards containing owner names, formatted balances, and type-specific rules (overdraft caps or interest rates).
-* Displays a detailed view of a single account's profile, including creation dates, status indicators, and owner contact details.
-
-![Bank Accounts List Card Layout](snapshots/accounts.png)
-*Figure 3: Bank account directory grid layout.*
+- Divided into Current and Saving accounts, displayed as visual cards.
+- Supports card badge colors mapping to the account status (CREATED, ACTIVATED, SUSPENDED).
+- Clicking on any account redirects to the Account Detail view.
 
 ### 4. Account Details & Paginated Transaction History
-* Showcases detailed account summaries, including creation date, balance, and metadata (overdraft or interest rate).
-* Renders an interactive transaction ledger (Debit/Credit indicators).
-* **Pagination**: Supports dynamically requesting historical logs from the API with options for page size (5, 10, 20 items).
+- Showcases detailed account summaries, including creation date, balance, and metadata (overdraft or interest rate).
+- Renders an interactive transaction ledger (Debit/Credit indicators).
+- **Pagination**: Supports dynamically requesting historical logs from the API with options for page size (5, 10, 20 items).
 
-![Account Details Card and Actions](snapshots/account-details-part1.png)
-*Figure 4a: Account information dashboard header.*
-
-![Account Details Customer Info](snapshots/account-details-part2.png)
-*Figure 4b: Linked account owner profile information.*
-
-![Paginated Operations History](snapshots/account-details-part3-include-transaction-history-with-pagination.png)
-*Figure 4c: Paginated transaction ledger showing operation types and dates.*
-
-### 5. Transfer & Financial Transactions
-* Includes forms to execute account debits (withdrawals) and credits (deposits).
-* Implements multi-account wire transfer forms with verification validations that prevent source and target account IDs from matching.
-* Handles API errors gracefully, returning structured exceptions like insufficient balances as readable toast alerts.
-
-![Credit / Debit Form](snapshots/credit-debit-acc.png)
-*Figure 5a: Basic credit or debit selection toggle page.*
-
-![Credit / Debit Validation Feedback](snapshots/credit-debit-verification.png)
-*Figure 5b: Real-time form validators showing mandatory inputs.*
-
-![Funds Transfer Form Layout](snapshots/transaction-source-to-destination.png)
-*Figure 5c: Account-to-account transfer layout with a directional flow indicator.*
-
-![Funds Transfer Source Validation](snapshots/transaction-verification-source.png)
-*Figure 5d: Source account validation checks.*
-
-![Funds Transfer Destination Validation](snapshots/transaction-verification-destination.png)
-*Figure 5e: Destination account validation checks.*
+### 5. Financial Operations
+- Forms to submit Debit or Credit requests against account IDs.
+- **Transfers**: Inter-account wire transfers supporting validation of source and destination accounts.
+- Built-in error handlers mapping failure outputs from API gateways to client toast notifications.
 
 ---
 
-## Running the Application
+## Brand Design System Tokens
+
+The application features a custom design system initialized inside `src/styles.css`:
+
+| Token | Property / Value | Purpose |
+|---|---|---|
+| `--color-primary` | `#3b82f6` (Indigo/Blue) | Brand colors for main actions |
+| `--color-accent` | `#0f766e` (Teal) | Accented sections |
+| `--color-success` | `#10b981` (Green) | Successful/Credit status badges |
+| `--color-danger` | `#ef4444` (Coral Red) | Suspended/Debit status badges |
+| `--color-bg-primary` | `#f8f9fc` (Slate Blue/Gray) | Layout viewport background |
+| `--color-bg-secondary`| `#ffffff` | Elevated component cards |
+| `--color-bg-sidebar` | `#0f172a` (Slate Black) | Dark professional sidebar |
+| `font-family` | `'Inter', sans-serif` | Premium sans-serif typography |
+| `Border Radius` | `6px` / `10px` / `16px` | Smooth card and button profiles |
+| `Transitions` | `all 0.2s cubic-bezier` | Micro-interactions and hover animations |
+
+---
+
+## Application Screenshots
+
+Here are snapshots of the application UI:
+
+### 1. Dashboard View
+![Dashboard View](snapshots/dashboard.png)
+
+### 2. Customer Management
+| Customer List | Search Filter | Add Customer |
+| --- | --- | --- |
+| ![Customer List](snapshots/customers.png) | ![Search Filter](snapshots/search-customer.png) | ![Add Customer](snapshots/add-new-customer.png) |
+
+### 3. Accounts Directory & Details
+| Accounts Cards | Account Details | Paginated History |
+| --- | --- | --- |
+| ![Accounts Directory](snapshots/accounts.png) | ![Account Info](snapshots/account-details-part1.png) | ![Paginated History](snapshots/account-details-part3-include-transaction-history-with-pagination.png) |
+
+### 4. Transactions & Operations
+| Credit / Debit Form | Operation Verification | Transfer Setup |
+| --- | --- | --- |
+| ![Credit & Debit Form](snapshots/credit-debit-acc.png) | ![Credit & Debit verification](snapshots/credit-debit-verification.png) | ![Transfer](snapshots/transaction-source-to-destination.png) |
+
+---
+
+## Development & Execution Guide
 
 ### Prerequisites
-* **Node.js** (version 18 or higher)
-* **NPM** (version 9 or higher)
+- Node.js (v18+)
+- NPM (v9+)
+- Angular CLI installed globally (`npm i -g @angular/cli`)
 
-### Setup & Local Development
+### Getting Started
 
 1. **Install dependencies**:
    ```bash
    npm install
    ```
 
-2. **Configure Connection Properties**:
-   Ensure `src/environments/environment.ts` points to your Spring Boot REST server:
+2. **Configure Backend API URL**:
+   Ensure `src/environments/environment.ts` points to your running backend:
    ```typescript
    export const environment = {
      production: false,
@@ -153,14 +192,14 @@ src/
    };
    ```
 
-3. **Start the dev server**:
+3. **Run local dev server**:
    ```bash
    npm start
    ```
-   The client will be available at `http://localhost:4200/`.
+   Open your browser to `http://localhost:4200/`.
 
-4. **Compile Production Bundle**:
+4. **Production Build**:
    ```bash
    npm run build
    ```
-   The compiled frontend bundle will be generated under `dist/digital-banking-frontend`.
+   The compiled single-page application outputs to `dist/digital-banking-frontend`.

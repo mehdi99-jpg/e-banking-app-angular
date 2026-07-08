@@ -1,0 +1,75 @@
+<div class="fade-in">
+  <div class="header-section">
+    <div>
+      <h1 class="page-title">Bank Accounts</h1>
+      <p class="page-subtitle">View and manage customer bank accounts, overdrafts, and savings rates.</p>
+    </div>
+  </div>
+
+  <div class="accounts-grid">
+    @for (account of accounts(); track ($index)) {
+      <div class="card account-card">
+        <div class="card-header">
+          @if (account.type === 'CurrentAccount') {
+            <span class="badge badge-current">Current Account</span>
+          } @else {
+            <span class="badge badge-saving">Savings Account</span>
+          }
+          
+          @if (asCurrent(account).status === 'ACTIVATED') {
+            <span class="badge badge-success">Active</span>
+          } @else if (asCurrent(account).status === 'CREATED') {
+            <span class="badge badge-warning">Created</span>
+          } @else {
+            <span class="badge badge-danger">Suspended</span>
+          }
+        </div>
+
+        <div class="card-body">
+          <div class="account-owner">
+            <span class="owner-label">Owner</span>
+            <h3 class="owner-name">{{ asCurrent(account).customerDTO.name }}</h3>
+          </div>
+          
+          <div class="account-balance">
+            <span class="balance-label">Available Balance</span>
+            <span class="balance-amount">
+              {{ asCurrent(account).balance | currency:'MAD':'symbol':'1.2-2' }}
+            </span>
+          </div>
+
+          <div class="account-meta">
+            @if (account.type === 'CurrentAccount') {
+              <div class="meta-item">
+                <span class="meta-label">Overdraft Limit</span>
+                <span class="meta-value">{{ asCurrent(account).overDraft | currency:'MAD':'symbol':'1.2-2' }}</span>
+              </div>
+            } @else {
+              <div class="meta-item">
+                <span class="meta-label">Interest Rate</span>
+                <span class="meta-value font-highlight">{{ asSaving(account).interestRate }}%</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <span class="account-id" title="{{ asCurrent(account).id }}">
+            ID: ...{{ asCurrent(account).id.substring(0, 8) }}
+          </span>
+          <button class="btn btn-outline btn-sm" [routerLink]="['/accounts', asCurrent(account).id]">
+            View Details
+          </button>
+        </div>
+      </div>
+    } @empty {
+      @if (!isLoading()) {
+        <div class="card empty-card">
+          <span class="empty-text">No bank accounts registered.</span>
+        </div>
+      }
+    }
+  </div>
+</div>
+
+<app-loading-spinner [isLoading]="isLoading()"></app-loading-spinner>

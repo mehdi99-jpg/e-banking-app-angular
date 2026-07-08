@@ -1,0 +1,103 @@
+<div class="fade-in">
+  <div class="header-section">
+    <a routerLink="/accounts" class="back-link">
+      <svg class="back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      Back to Accounts
+    </a>
+  </div>
+
+  @if (account(); as acc) {
+    <div class="details-layout">
+      <!-- Left side: Account Info Cards -->
+      <div class="details-left">
+        <div class="card info-card">
+          <div class="info-header">
+            <div>
+              <span class="info-label">Account Number</span>
+              <h2 class="account-id-heading">{{ asCurrent(acc).id }}</h2>
+            </div>
+            
+            @if (acc.type === 'CurrentAccount') {
+              <span class="badge badge-current">Current</span>
+            } @else {
+              <span class="badge badge-saving">Savings</span>
+            }
+          </div>
+
+          <div class="balance-display">
+            <span class="info-label">Current Balance</span>
+            <h1 class="balance-number">{{ asCurrent(acc).balance | currency:'MAD':'symbol':'1.2-2' }}</h1>
+          </div>
+
+          <div class="info-grid">
+            <div class="grid-item">
+              <span class="info-label">Status</span>
+              <span class="info-value">
+                @if (asCurrent(acc).status === 'ACTIVATED') {
+                  <span class="badge badge-success">Active</span>
+                } @else if (asCurrent(acc).status === 'CREATED') {
+                  <span class="badge badge-warning">Created</span>
+                } @else {
+                  <span class="badge badge-danger">Suspended</span>
+                }
+              </span>
+            </div>
+
+            <div class="grid-item">
+              <span class="info-label">Created On</span>
+              <span class="info-value">{{ asCurrent(acc).createdAt | date:'mediumDate' }}</span>
+            </div>
+
+            @if (acc.type === 'CurrentAccount') {
+              <div class="grid-item">
+                <span class="info-label">Overdraft Limit</span>
+                <span class="info-value font-bold">{{ asCurrent(acc).overDraft | currency:'MAD':'symbol':'1.2-2' }}</span>
+              </div>
+            } @else {
+              <div class="grid-item">
+                <span class="info-label">Interest Rate</span>
+                <span class="info-value font-bold font-teal">{{ asSaving(acc).interestRate }}%</span>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="card customer-card">
+          <h3 class="card-title">Account Owner</h3>
+          <div class="customer-info">
+            <div class="info-row">
+              <span class="info-label">Full Name</span>
+              <span class="info-value-large">{{ asCurrent(acc).customerDTO.name }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Email Address</span>
+              <span class="info-value-large">{{ asCurrent(acc).customerDTO.email }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right side: Quick actions -->
+      <div class="details-right">
+        <div class="card actions-card">
+          <h3 class="card-title">Quick Actions</h3>
+          <p class="actions-subtitle">Perform instant banking operations on this account.</p>
+          
+          <div class="actions-buttons-vertical">
+            <a routerLink="/transactions/debit-credit" class="btn btn-primary btn-block">
+              Debit / Credit Account
+            </a>
+            <a routerLink="/transactions/transfer" class="btn btn-outline btn-block">
+              Transfer Funds
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
+
+<app-loading-spinner [isLoading]="isLoading()"></app-loading-spinner>

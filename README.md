@@ -68,23 +68,23 @@ graph TD
     PageRouter --> Accounts[Account Directory]
     PageRouter --> Transactions[Financial Operations]
 
-    subgraph Service Layer (API Communication)
+    subgraph service_layer ["Service Layer (API Communication)"]
         Customers --> CustService[CustomerService]
         Accounts --> AccService[AccountService]
         Transactions --> AccService
     end
 
-    subgraph Core Configuration (Environment)
+    subgraph core_config ["Core Configuration (Environment)"]
         CustService --> Env[environments.ts]
         AccService --> Env
     end
     
-    subgraph Data Models (Structs & Enums)
-        CustService --> Models[Customer / BankAccount / Transaction Models]
+    subgraph data_models ["Data Models (Structs & Enums)"]
+        CustService --> Models["Customer / BankAccount / Transaction Models"]
         AccService --> Models
     end
 
-    subgraph Utilities (Reusable)
+    subgraph utilities ["Utilities (Reusable)"]
         Pages[All Pages] --> Spinner[LoadingSpinner Component]
         Pages --> Dialog[ConfirmDialog Component]
         Pages --> Toast[ToastService / ToastNotification]

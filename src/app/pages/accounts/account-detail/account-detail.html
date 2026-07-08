@@ -1,4 +1,5 @@
 <div class="fade-in">
+  <!-- Top Navigation Back Header -->
   <div class="header-section">
     <a routerLink="/accounts" class="back-link">
       <svg class="back-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -11,8 +12,9 @@
 
   @if (account(); as acc) {
     <div class="details-layout">
-      <!-- Left side: Account Info Cards -->
+      <!-- Left side: Account Info Cards & History -->
       <div class="details-left">
+        <!-- Account Info Summary Card -->
         <div class="card info-card">
           <div class="info-header">
             <div>
@@ -65,6 +67,7 @@
           </div>
         </div>
 
+        <!-- Customer Owner Card -->
         <div class="card customer-card">
           <h3 class="card-title">Account Owner</h3>
           <div class="customer-info">
@@ -77,6 +80,98 @@
               <span class="info-value-large">{{ asCurrent(acc).customerDTO.email }}</span>
             </div>
           </div>
+        </div>
+
+        <!-- Transaction History Table Card -->
+        <div class="card history-card">
+          <h3 class="card-title">Transaction History</h3>
+          
+          <div class="table-responsive">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                @if (history(); as hist) {
+                  @for (op of hist.accountOperationDTOList; track op.id) {
+                    <tr>
+                      <td class="op-date">{{ op.operationDate | date:'medium' }}</td>
+                      <td>
+                        @if (op.type === 'DEBIT') {
+                          <span class="badge badge-danger badge-iconic">
+                            <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                              <line x1="12" y1="5" x2="12" y2="19"></line>
+                              <polyline points="19 12 12 19 5 12"></polyline>
+                            </svg>
+                            Debit
+                          </span>
+                        } @else {
+                          <span class="badge badge-success badge-iconic">
+                            <svg class="badge-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                              <line x1="12" y1="19" x2="12" y2="5"></line>
+                              <polyline points="5 12 12 5 19 12"></polyline>
+                            </svg>
+                            Credit
+                          </span>
+                        }
+                      </td>
+                      <td class="op-amount" [class.debit-amount]="op.type === 'DEBIT'" [class.credit-amount]="op.type === 'CREDIT'">
+                        {{ op.type === 'DEBIT' ? '-' : '+' }}{{ op.amount | currency:'MAD':'symbol':'1.2-2' }}
+                      </td>
+                      <td class="op-desc">{{ op.description }}</td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="4" class="empty-state">No transactions recorded for this account.</td>
+                    </tr>
+                  }
+                }
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Pagination Controls -->
+          @if (history(); as hist) {
+            @if (hist.totalPages > 0) {
+              <div class="pagination-container">
+                <div class="page-size-selector">
+                  <span class="pagination-label">Show:</span>
+                  <select class="form-control select-xs" (change)="onPageSizeChange($event)">
+                    <option value="5" [selected]="pageSize() === 5">5</option>
+                    <option value="10" [selected]="pageSize() === 10">10</option>
+                    <option value="20" [selected]="pageSize() === 20">20</option>
+                  </select>
+                  <span class="pagination-label">items</span>
+                </div>
+
+                <div class="page-info">
+                  Page {{ hist.currentPage + 1 }} of {{ hist.totalPages }}
+                </div>
+
+                <div class="pagination-buttons">
+                  <button 
+                    class="btn btn-outline btn-xs" 
+                    [disabled]="currentPage() === 0" 
+                    (click)="onPageChange(currentPage() - 1)"
+                  >
+                    Previous
+                  </button>
+                  <button 
+                    class="btn btn-outline btn-xs" 
+                    [disabled]="currentPage() >= hist.totalPages - 1" 
+                    (click)="onPageChange(currentPage() + 1)"
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            }
+          }
         </div>
       </div>
 

@@ -1,59 +1,166 @@
-# DigitalBankingFrontend
+# Digital Banking Application - Frontend Client
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.17.
+Developed by **HYNDI ELMEHDI**
 
-## Development server
+A modern, high-performance web interface for the Digital Banking Application. This client is built using Angular 21 with Standalone Components, reactive state management via Signals, and a bespoke CSS design system. It handles real-time data fetching, reactive form validations, dynamic theme styling, and responsive layout adjustments.
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
+## Technical Stack
+
+* **Framework**: Angular 21 (Standalone Architecture)
+* **State Management**: Angular Signals and Computeds
+* **Styling**: Custom CSS Design System (no TailwindCSS or CSS frameworks)
+* **Http Client**: RxJS Observables and HttpClient
+* **Build Engine**: Vite and Angular CLI Build Pipeline
+
+---
+
+## Project Structure
+
+The project directory is structured as follows to ensure separation of concerns:
+
+```text
+src/
+├── app/
+│   ├── components/            # Reusable UI presentation layers
+│   │   ├── confirm-dialog/    # Pop-up modal for action approvals
+│   │   ├── loading-spinner/   # Indeterminate progress spinner
+│   │   ├── navbar/            # Global navigation header
+│   │   ├── sidebar/           # Left drawer navigation
+│   │   └── toast-notification/# System status overlay manager
+│   │
+│   ├── models/                # TypeScript schemas and data definitions
+│   │   ├── customer.model.ts
+│   │   ├── bank-account.model.ts (Polymorphic account hierarchy)
+│   │   ├── account-operation.model.ts
+│   │   ├── account-history.model.ts (Paginated transaction definitions)
+│   │   ├── transaction.model.ts (Form request payloads)
+│   │   ├── account-status.enum.ts
+│   │   └── operation-type.enum.ts
+│   │
+│   ├── services/              # Business logic services and REST APIs
+│   │   ├── customer.service.ts
+│   │   ├── account.service.ts
+│   │   └── toast.service.ts   # Signal-based toast publisher
+│   │
+│   ├── pages/                 # Routing view controllers
+│   │   ├── dashboard/         # Stat telemetry widgets
+│   │   ├── customers/         # Customer directory and profile modifications
+│   │   ├── accounts/          # Account detail profiles and paginated history
+│   │   └── transactions/      # Financial processing (Debit, Credit, Transfer)
+│   │
+│   ├── app.config.ts          # Core application providers and settings
+│   ├── app.routes.ts          # Angular SPA route registry
+│   └── app.ts                 # Root shell component
+│
+├── environments/              # Compilation environment configurations
+│   ├── environment.ts
+│   └── environment.prod.ts
+│
+├── index.html                 # HTML viewport entry point
+└── styles.css                 # Base stylesheet and variables
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## Core Application Workflows & Interface Snapshots
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+### 1. Account Telemetry Dashboard
+* Aggregates total client count, active bank account counts, and combined deposit balances across the system using RxJS parallel forkJoin requests.
+* Provides recent transaction lists populated from active bank accounts.
+* Integrates quick-access navigation buttons for common bank administrative tasks.
 
-```bash
-ng generate component component-name
-```
+![Dashboard Page Interface](snapshots/dashboard.png)
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+### 2. Client Profile Management (CRUD)
+* Lists registered clients in a clean tabular layout with client-side name/email filters powered by computed Signals.
+* Provides dynamic inputs validated using Angular Reactive Forms.
+* Restricts critical actions (such as customer deletion) behind confirmation pop-ups before dispatching HTTP calls.
+* Leverages JPA cascade configurations on the backend to automatically delete linked accounts and transaction histories when a customer is removed.
 
-```bash
-ng generate --help
-```
+![Customer Directory List](snapshots/customers.png)
+*Figure 2a: Customer listing table with action items.*
 
-## Building
+![Customer Search Filtering](snapshots/search-customer.png)
+*Figure 2b: Reactive client-side keyword search.*
 
-To build the project run:
+![Add Customer Form Validation](snapshots/add-new-customer.png)
+*Figure 2c: Reactive Customer registration form showing real-time validation inputs.*
 
-```bash
-ng build
-```
+### 3. Bank Account Directory
+* Represents bank accounts as responsive, colored cards containing owner names, formatted balances, and type-specific rules (overdraft caps or interest rates).
+* Displays a detailed view of a single account's profile, including creation dates, status indicators, and owner contact details.
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+![Bank Accounts List Card Layout](snapshots/accounts.png)
+*Figure 3: Bank account directory grid layout.*
 
-## Running unit tests
+### 4. Account Details & Paginated Transaction History
+* Showcases detailed account summaries, including creation date, balance, and metadata (overdraft or interest rate).
+* Renders an interactive transaction ledger (Debit/Credit indicators).
+* **Pagination**: Supports dynamically requesting historical logs from the API with options for page size (5, 10, 20 items).
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+![Account Details Card and Actions](snapshots/account-details-part1.png)
+*Figure 4a: Account information dashboard header.*
 
-```bash
-ng test
-```
+![Account Details Customer Info](snapshots/account-details-part2.png)
+*Figure 4b: Linked account owner profile information.*
 
-## Running end-to-end tests
+![Paginated Operations History](snapshots/account-details-part3-include-transaction-history-with-pagination.png)
+*Figure 4c: Paginated transaction ledger showing operation types and dates.*
 
-For end-to-end (e2e) testing, run:
+### 5. Transfer & Financial Transactions
+* Includes forms to execute account debits (withdrawals) and credits (deposits).
+* Implements multi-account wire transfer forms with verification validations that prevent source and target account IDs from matching.
+* Handles API errors gracefully, returning structured exceptions like insufficient balances as readable toast alerts.
 
-```bash
-ng e2e
-```
+![Credit / Debit Form](snapshots/credit-debit-acc.png)
+*Figure 5a: Basic credit or debit selection toggle page.*
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+![Credit / Debit Validation Feedback](snapshots/credit-debit-verification.png)
+*Figure 5b: Real-time form validators showing mandatory inputs.*
 
-## Additional Resources
+![Funds Transfer Form Layout](snapshots/transaction-source-to-destination.png)
+*Figure 5c: Account-to-account transfer layout with a directional flow indicator.*
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+![Funds Transfer Source Validation](snapshots/transaction-verification-source.png)
+*Figure 5d: Source account validation checks.*
+
+![Funds Transfer Destination Validation](snapshots/transaction-verification-destination.png)
+*Figure 5e: Destination account validation checks.*
+
+---
+
+## Running the Application
+
+### Prerequisites
+* **Node.js** (version 18 or higher)
+* **NPM** (version 9 or higher)
+
+### Setup & Local Development
+
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+2. **Configure Connection Properties**:
+   Ensure `src/environments/environment.ts` points to your Spring Boot REST server:
+   ```typescript
+   export const environment = {
+     production: false,
+     apiBaseUrl: 'http://localhost:8085'
+   };
+   ```
+
+3. **Start the dev server**:
+   ```bash
+   npm start
+   ```
+   The client will be available at `http://localhost:4200/`.
+
+4. **Compile Production Bundle**:
+   ```bash
+   npm run build
+   ```
+   The compiled frontend bundle will be generated under `dist/digital-banking-frontend`.

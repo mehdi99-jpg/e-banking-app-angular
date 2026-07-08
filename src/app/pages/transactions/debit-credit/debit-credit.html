@@ -1,0 +1,107 @@
+<div class="fade-in container-small">
+  <div class="header-section">
+    <div>
+      <h1 class="page-title">Debit / Credit Account</h1>
+      <p class="page-subtitle">Execute instant debit or credit transactions on a customer bank account.</p>
+    </div>
+  </div>
+
+  <div class="tabs-container">
+    <button 
+      class="tab-btn" 
+      [class.active]="operationType() === 'DEBIT'" 
+      (click)="setOperationType('DEBIT')"
+    >
+      Debit (Withdrawal)
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="operationType() === 'CREDIT'" 
+      (click)="setOperationType('CREDIT')"
+    >
+      Credit (Deposit)
+    </button>
+  </div>
+
+  <div class="card form-card">
+    @if (errorMessage(); as msg) {
+      <div class="error-box fade-in">
+        <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <div class="error-message">
+          <strong>Transaction Failed:</strong> {{ msg }}
+        </div>
+      </div>
+    }
+
+    <form [formGroup]="transactionForm" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label class="form-label" for="accountId">Select Bank Account</label>
+        <select 
+          id="accountId" 
+          class="form-control" 
+          formControlName="accountId"
+          [class.is-invalid]="accountIdControl?.touched && accountIdControl?.invalid"
+        >
+          <option value="" disabled selected>Choose an account...</option>
+          @for (acc of accounts(); track acc) {
+            <option [value]="asCurrent(acc).id">
+              {{ asCurrent(acc).customerDTO.name }} ({{ acc.type === 'CurrentAccount' ? 'Current' : 'Savings' }}) — ID: {{ asCurrent(acc).id.substring(0, 8) }}... (Bal: {{ asCurrent(acc).balance }} MAD)
+            </option>
+          }
+        </select>
+        @if (accountIdControl?.touched && accountIdControl?.invalid) {
+          <div class="invalid-feedback">Please select an account.</div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="amount">Amount (MAD)</label>
+        <input 
+          type="number" 
+          id="amount" 
+          class="form-control" 
+          placeholder="0.00"
+          formControlName="amount"
+          [class.is-invalid]="amountControl?.touched && amountControl?.invalid"
+        />
+        @if (amountControl?.touched && amountControl?.invalid) {
+          <div class="invalid-feedback">
+            @if (amountControl?.errors?.['required']) { Amount is required. }
+            @if (amountControl?.errors?.['min']) { Amount must be greater than 0. }
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="description">Description</label>
+        <input 
+          type="text" 
+          id="description" 
+          class="form-control" 
+          placeholder="e.g. ATM cash withdrawal"
+          formControlName="description"
+          [class.is-invalid]="descriptionControl?.touched && descriptionControl?.invalid"
+        />
+        @if (descriptionControl?.touched && descriptionControl?.invalid) {
+          <div class="invalid-feedback">
+            @if (descriptionControl?.errors?.['required']) { Description is required. }
+            @if (descriptionControl?.errors?.['minlength']) { Description must be at least 3 characters. }
+          </div>
+        }
+      </div>
+
+      <div class="form-footer">
+        <button type="button" class="btn btn-outline" routerLink="/accounts">Cancel</button>
+        <button type="submit" class="btn" [class.btn-primary]="operationType() === 'CREDIT'" [class.btn-danger]="operationType() === 'DEBIT'" [disabled]="transactionForm.invalid">
+          Confirm {{ operationType() === 'DEBIT' ? 'Debit' : 'Credit' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<app-loading-spinner [isLoading]="isLoading()"></app-loading-spinner>

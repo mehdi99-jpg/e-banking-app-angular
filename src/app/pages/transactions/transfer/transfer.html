@@ -1,0 +1,125 @@
+<div class="fade-in container-small">
+  <div class="header-section">
+    <div>
+      <h1 class="page-title">Transfer Funds</h1>
+      <p class="page-subtitle">Transfer money safely between two customer bank accounts.</p>
+    </div>
+  </div>
+
+  <div class="card form-card">
+    @if (errorMessage(); as msg) {
+      <div class="error-box fade-in">
+        <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <div class="error-message">
+          <strong>Transaction Failed:</strong> {{ msg }}
+        </div>
+      </div>
+    }
+
+    <form [formGroup]="transferForm" (ngSubmit)="onSubmit()">
+      
+      <div class="transfer-flow">
+        <!-- Source Account Select -->
+        <div class="form-group flex-1">
+          <label class="form-label" for="accountSource">Source Account (Debit)</label>
+          <select 
+            id="accountSource" 
+            class="form-control" 
+            formControlName="accountSource"
+            [class.is-invalid]="sourceControl?.touched && sourceControl?.invalid"
+          >
+            <option value="" disabled selected>Select source...</option>
+            @for (acc of accounts(); track acc) {
+              <option [value]="asCurrent(acc).id">
+                {{ asCurrent(acc).customerDTO.name }} ({{ asCurrent(acc).balance }} MAD)
+              </option>
+            }
+          </select>
+          @if (sourceControl?.touched && sourceControl?.invalid) {
+            <div class="invalid-feedback">Source account is required.</div>
+          }
+        </div>
+
+        <!-- Direction Arrow -->
+        <div class="flow-arrow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </div>
+
+        <!-- Destination Account Select -->
+        <div class="form-group flex-1">
+          <label class="form-label" for="accountDestination">Destination Account (Credit)</label>
+          <select 
+            id="accountDestination" 
+            class="form-control" 
+            formControlName="accountDestination"
+            [class.is-invalid]="destinationControl?.touched && destinationControl?.invalid"
+          >
+            <option value="" disabled selected>Select destination...</option>
+            @for (acc of accounts(); track acc) {
+              <option [value]="asCurrent(acc).id">
+                {{ asCurrent(acc).customerDTO.name }} — ID: {{ asCurrent(acc).id.substring(0, 5) }}...
+              </option>
+            }
+          </select>
+          @if (destinationControl?.touched && destinationControl?.invalid) {
+            <div class="invalid-feedback">Destination account is required.</div>
+          }
+        </div>
+      </div>
+
+      <!-- Transfer Amount -->
+      <div class="form-group">
+        <label class="form-label" for="amount">Amount to Transfer (MAD)</label>
+        <input 
+          type="number" 
+          id="amount" 
+          class="form-control" 
+          placeholder="0.00"
+          formControlName="amount"
+          [class.is-invalid]="amountControl?.touched && amountControl?.invalid"
+        />
+        @if (amountControl?.touched && amountControl?.invalid) {
+          <div class="invalid-feedback">
+            @if (amountControl?.errors?.['required']) { Amount is required. }
+            @if (amountControl?.errors?.['min']) { Amount must be greater than 0. }
+          </div>
+        }
+      </div>
+
+      <!-- Transfer Description -->
+      <div class="form-group">
+        <label class="form-label" for="description">Description</label>
+        <input 
+          type="text" 
+          id="description" 
+          class="form-control" 
+          placeholder="e.g. Monthly rent virement"
+          formControlName="description"
+          [class.is-invalid]="descriptionControl?.touched && descriptionControl?.invalid"
+        />
+        @if (descriptionControl?.touched && descriptionControl?.invalid) {
+          <div class="invalid-feedback">
+            @if (descriptionControl?.errors?.['required']) { Description is required. }
+            @if (descriptionControl?.errors?.['minlength']) { Description must be at least 3 characters. }
+          </div>
+        }
+      </div>
+
+      <div class="form-footer">
+        <button type="button" class="btn btn-outline" routerLink="/accounts">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="transferForm.invalid">
+          Execute Transfer
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<app-loading-spinner [isLoading]="isLoading()"></app-loading-spinner>

@@ -1,0 +1,62 @@
+<div class="fade-in container-small">
+  <div class="header-section">
+    <div>
+      <h1 class="page-title">{{ isEditMode() ? 'Edit Customer Profile' : 'Register Customer' }}</h1>
+      <p class="page-subtitle">
+        {{ isEditMode() ? 'Modify client credentials and update profile details.' : 'Register a new banking customer into the enterprise system.' }}
+      </p>
+    </div>
+  </div>
+
+  <div class="card form-card">
+    <form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+      <!-- Customer Name Input -->
+      <div class="form-group">
+        <label class="form-label" for="name">Full Name</label>
+        <input 
+          type="text" 
+          id="name" 
+          class="form-control" 
+          placeholder="e.g. John Doe"
+          formControlName="name"
+          [class.is-invalid]="nameControl?.touched && nameControl?.invalid"
+        />
+        @if (nameControl?.touched && nameControl?.invalid) {
+          <div class="invalid-feedback">
+            @if (nameControl?.errors?.['required']) { Name is required. }
+            @if (nameControl?.errors?.['minlength']) { Name must be at least 2 characters. }
+          </div>
+        }
+      </div>
+
+      <!-- Customer Email Input -->
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address</label>
+        <input 
+          type="email" 
+          id="email" 
+          class="form-control" 
+          placeholder="e.g. john.doe@email.com"
+          formControlName="email"
+          [class.is-invalid]="emailControl?.touched && emailControl?.invalid"
+        />
+        @if (emailControl?.touched && emailControl?.invalid) {
+          <div class="invalid-feedback">
+            @if (emailControl?.errors?.['required']) { Email is required. }
+            @if (emailControl?.errors?.['email']) { Please enter a valid email address. }
+          </div>
+        }
+      </div>
+
+      <!-- Footer Action Buttons -->
+      <div class="form-footer">
+        <button type="button" class="btn btn-outline" routerLink="/customers">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="customerForm.invalid">
+          {{ isEditMode() ? 'Save Profile' : 'Register Client' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<app-loading-spinner [isLoading]="isLoading()"></app-loading-spinner>

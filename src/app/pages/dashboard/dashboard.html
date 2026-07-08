@@ -1,0 +1,145 @@
+<div class="fade-in">
+  <div class="header-section">
+    <h1 class="page-title">Financial Dashboard</h1>
+    <p class="page-subtitle">Overview of your bank system statistics, recent client activities, and quick tools.</p>
+  </div>
+
+  <!-- Summary Cards Grid -->
+  <div class="stats-grid">
+    <!-- Total Customers Card -->
+    <div class="card stat-card border-blue">
+      <div class="stat-icon-wrapper bg-blue">
+        <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+          <circle cx="9" cy="7" r="4" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Clients</span>
+        <h2 class="stat-value fade-in-value">{{ totalCustomers() }}</h2>
+      </div>
+    </div>
+
+    <!-- Total Accounts Card -->
+    <div class="card stat-card border-teal">
+      <div class="stat-icon-wrapper bg-teal">
+        <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="6" width="20" height="12" rx="2" />
+          <circle cx="12" cy="12" r="2" />
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Active Accounts</span>
+        <h2 class="stat-value fade-in-value">{{ totalAccounts() }}</h2>
+      </div>
+    </div>
+
+    <!-- Total Balances Card -->
+    <div class="card stat-card border-indigo">
+      <div class="stat-icon-wrapper bg-indigo">
+        <svg class="stat-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="1" x2="12" y2="23"></line>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+        </svg>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">System Deposits</span>
+        <h2 class="stat-value fade-in-value">{{ totalBalance() | currency:'MAD':'symbol':'1.0-0' }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="dashboard-details">
+    <!-- Left Column: Recent Activities -->
+    <div class="activities-panel">
+      <div class="card details-card">
+        <h3 class="card-title">Recent Transactions</h3>
+        
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>Amount</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (op of recentOperations(); track op.id) {
+                <tr>
+                  <td class="op-date">{{ op.operationDate | date:'short' }}</td>
+                  <td>
+                    <span class="badge" [class.badge-success]="op.type === 'CREDIT'" [class.badge-danger]="op.type === 'DEBIT'">
+                      {{ op.type }}
+                    </span>
+                  </td>
+                  <td class="op-amount" [class.debit-amount]="op.type === 'DEBIT'" [class.credit-amount]="op.type === 'CREDIT'">
+                    {{ op.type === 'DEBIT' ? '-' : '+' }}{{ op.amount | currency:'MAD':'symbol':'1.2-2' }}
+                  </td>
+                  <td class="op-desc">{{ op.description }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="4" class="empty-state">No recent transactions recorded.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Shortcuts -->
+    <div class="shortcuts-panel">
+      <div class="card details-card">
+        <h3 class="card-title">Quick Tasks</h3>
+        <p class="shortcuts-subtitle">Access management pages and execute operations instantly.</p>
+        
+        <div class="shortcuts-list">
+          <a class="shortcut-item" routerLink="/customers/new">
+            <div class="shortcut-icon bg-blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <line x1="19" y1="8" x2="19" y2="14"></line>
+                <line x1="16" y1="11" x2="22" y2="11"></line>
+              </svg>
+            </div>
+            <div class="shortcut-label">
+              <strong>Add Customer</strong>
+              <span>Register new client</span>
+            </div>
+          </a>
+
+          <a class="shortcut-item" routerLink="/transactions/debit-credit">
+            <div class="shortcut-icon bg-teal">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <polyline points="19 12 12 19 5 12"></polyline>
+              </svg>
+            </div>
+            <div class="shortcut-label">
+              <strong>Debit / Credit</strong>
+              <span>Cash deposit or withdrawal</span>
+            </div>
+          </a>
+
+          <a class="shortcut-item" routerLink="/transactions/transfer">
+            <div class="shortcut-icon bg-indigo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path>
+              </svg>
+            </div>
+            <div class="shortcut-label">
+              <strong>Transfer Funds</strong>
+              <span>Send money between clients</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<app-loading-spinner [isLoading]="isLoading()"></app-loading-spinner>

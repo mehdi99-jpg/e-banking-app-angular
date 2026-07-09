@@ -4,10 +4,11 @@ import { Navbar } from './components/navbar/navbar';
 import { Sidebar } from './components/sidebar/sidebar';
 import { ToastNotification } from './components/toast-notification/toast-notification';
 import { AuthService } from './services/auth.service';
+import { ChatWidgetComponent } from './components/chat-widget/chat-widget';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Navbar, Sidebar, ToastNotification],
+  imports: [RouterOutlet, Navbar, Sidebar, ToastNotification, ChatWidgetComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

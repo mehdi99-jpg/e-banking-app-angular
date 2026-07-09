@@ -1,0 +1,83 @@
+<div class="login-wrapper">
+  <!-- Dynamic Unsplash Background Layer -->
+  <div class="bg-image-overlay"></div>
+
+  <div class="login-container fade-in">
+    <div class="card login-card">
+      <div class="login-header">
+        <!-- Logo -->
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <rect x="2" y="5" width="20" height="14" rx="2" />
+            <line x1="2" y1="10" x2="22" y2="10" />
+          </svg>
+        </div>
+        <h2 class="brand-title">e-Banking</h2>
+        <p class="brand-subtitle">Access your financial administration dashboard</p>
+      </div>
+
+      <!-- Styled Error Box for Authentication Failure -->
+      @if (errorMessage(); as msg) {
+        <div class="error-box fade-in">
+          <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="12"></line>
+            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+          </svg>
+          <div class="error-message">{{ msg }}</div>
+        </div>
+      }
+
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <!-- Username input -->
+        <div class="form-group">
+          <label class="form-label" for="username">Username</label>
+          <input 
+            type="text" 
+            id="username" 
+            class="form-control" 
+            placeholder="Enter your username"
+            formControlName="username"
+            [class.is-invalid]="usernameControl?.touched && usernameControl?.invalid"
+          />
+          @if (usernameControl?.touched && usernameControl?.invalid) {
+            <div class="invalid-feedback">
+              @if (usernameControl?.errors?.['required']) { Username is required. }
+              @if (usernameControl?.errors?.['minlength']) { Username must be at least 4 characters. }
+            </div>
+          }
+        </div>
+
+        <!-- Password input -->
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            class="form-control" 
+            placeholder="Enter your password"
+            formControlName="password"
+            [class.is-invalid]="passwordControl?.touched && passwordControl?.invalid"
+          />
+          @if (passwordControl?.touched && passwordControl?.invalid) {
+            <div class="invalid-feedback">
+              @if (passwordControl?.errors?.['required']) { Password is required. }
+              @if (passwordControl?.errors?.['minlength']) { Password must be at least 4 characters. }
+            </div>
+          }
+        </div>
+
+        <!-- Submit Button -->
+        <button 
+          type="submit" 
+          class="btn btn-primary btn-block" 
+          [disabled]="loginForm.invalid"
+        >
+          Sign In
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<app-loading-spinner [isLoading]="isLoading()"></app-loading-spinner>

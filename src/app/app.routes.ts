@@ -6,9 +6,11 @@ import { AccountDetailComponent } from './pages/accounts/account-detail/account-
 import { DebitCreditComponent } from './pages/transactions/debit-credit/debit-credit';
 import { TransferComponent } from './pages/transactions/transfer/transfer';
 import { DashboardComponent } from './pages/dashboard/dashboard';
+import { LoginComponent } from './pages/login/login';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'customers', component: CustomerListComponent },
   { path: 'customers/new', component: CustomerFormComponent },

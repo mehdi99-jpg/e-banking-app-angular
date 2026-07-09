@@ -48,6 +48,7 @@ export class LoginComponent implements OnInit {
       next: (response) => {
         if (response && response['access-token']) {
           this.authService.saveToken(response['access-token']);
+          this.isLoading.set(false);
           this.router.navigate(['/dashboard']);
         } else {
           this.errorMessage.set('Invalid server response format.');

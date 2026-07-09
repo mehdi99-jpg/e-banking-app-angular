@@ -154,6 +154,7 @@ a:hover {
 
 .btn-primary:hover {
   background-color: var(--color-primary-dark);
+  color: var(--color-text-on-primary);
 }
 
 .btn-outline {
@@ -175,6 +176,7 @@ a:hover {
 
 .btn-danger:hover {
   background-color: #dc2626;
+  color: var(--color-text-on-primary);
 }
 
 /* 7. Status Badges */

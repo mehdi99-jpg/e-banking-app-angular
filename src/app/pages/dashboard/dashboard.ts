@@ -8,6 +8,7 @@ import { ToastService } from '../../services/toast.service';
 import { LoadingSpinner } from '../../components/loading-spinner/loading-spinner';
 import { AccountOperation } from '../../models/account-operation.model';
 import { BankAccount } from '../../models/bank-account.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -25,7 +26,8 @@ export class DashboardComponent implements OnInit {
   constructor(
     private customerService: CustomerService,
     private accountService: AccountService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {

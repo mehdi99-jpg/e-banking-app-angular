@@ -81,6 +81,10 @@
   gap: 1.5rem;
 }
 
+.dashboard-details.full-width {
+  grid-template-columns: 1fr;
+}
+
 .card-title {
   font-size: 1.1rem;
   margin-bottom: 1.25rem;

@@ -1,0 +1,95 @@
+<!-- Floating Chat Button -->
+@if (!isOpen()) {
+  <button class="chat-fab" (click)="toggleChat()" title="Chat with AI Assistant">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+    </svg>
+  </button>
+}
+
+<!-- Chat Window -->
+@if (isOpen()) {
+  <div class="chat-window slide-up">
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="chat-header-info">
+        <div class="ai-avatar">AI</div>
+        <div>
+          <h4>Banking Assistant</h4>
+          <span class="status-online">Online</span>
+        </div>
+      </div>
+      <button class="chat-close-btn" (click)="toggleChat()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Messages Area -->
+    <div class="chat-messages" #messagesContainer>
+      @if (chatService.messages().length === 0) {
+        <div class="chat-welcome">
+          <div class="welcome-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+              <path d="M2 17l10 5 10-5"></path>
+              <path d="M2 12l10 5 10-5"></path>
+            </svg>
+          </div>
+          <h4>Welcome, {{ authService.username() }}!</h4>
+          <p>I'm your AI banking assistant. Ask me about customers, accounts, balances, or transaction history.</p>
+          <div class="suggestion-chips">
+            <button class="chip" (click)="userInput = 'List all customers'; sendMessage()">List all customers</button>
+            <button class="chip" (click)="userInput = 'Show me all accounts'; sendMessage()">Show all accounts</button>
+            <button class="chip" (click)="userInput = 'What is the total balance?'; sendMessage()">Total balance</button>
+          </div>
+        </div>
+      }
+
+      @for (msg of chatService.messages(); track msg.timestamp) {
+        <div class="message" [class.user-message]="msg.role === 'user'" [class.ai-message]="msg.role === 'assistant'">
+          @if (msg.role === 'assistant') {
+            <div class="msg-avatar">AI</div>
+          }
+          <div class="msg-bubble">
+            <div class="msg-content">{{ msg.content }}</div>
+            <span class="msg-time">{{ msg.timestamp | date:'shortTime' }}</span>
+          </div>
+        </div>
+      }
+
+      @if (chatService.isLoading()) {
+        <div class="message ai-message">
+          <div class="msg-avatar">AI</div>
+          <div class="msg-bubble typing-indicator">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Input Area -->
+    <div class="chat-input-area">
+      <input
+        type="text"
+        class="chat-input"
+        placeholder="Ask about customers, accounts..."
+        [(ngModel)]="userInput"
+        (keydown)="onKeyDown($event)"
+        [disabled]="chatService.isLoading()"
+      />
+      <button 
+        class="chat-send-btn" 
+        (click)="sendMessage()" 
+        [disabled]="!userInput.trim() || chatService.isLoading()"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+}

@@ -85,3 +85,27 @@
   font-size: 0.75rem;
   color: var(--color-text-secondary);
 }
+
+.logout-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-secondary);
+  padding: 0.5rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-default);
+  margin-left: 0.5rem;
+}
+
+.logout-btn:hover {
+  background-color: var(--color-danger-light);
+  color: var(--color-danger);
+}
+
+.logout-icon {
+  width: 20px;
+  height: 20px;
+}

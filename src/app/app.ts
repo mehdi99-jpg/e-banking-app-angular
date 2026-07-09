@@ -1,8 +1,9 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Navbar } from './components/navbar/navbar';
 import { Sidebar } from './components/sidebar/sidebar';
 import { ToastNotification } from './components/toast-notification/toast-notification';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -12,5 +13,5 @@ import { ToastNotification } from './components/toast-notification/toast-notific
 })
 export class App {
   protected readonly title = signal('digital-banking-frontend');
+  public authService = inject(AuthService);
 }
-

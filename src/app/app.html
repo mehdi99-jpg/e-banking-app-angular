@@ -1,20 +1,26 @@
 <!-- 🏦 e-Banking Application Shell -->
-<div class="app-layout">
-  <!-- Top Navbar -->
-  <app-navbar></app-navbar>
+@if (authService.isLoggedIn()) {
+  <div class="app-layout">
+    <!-- Top Navbar -->
+    <app-navbar></app-navbar>
 
-  <div class="app-body">
-    <!-- Left Navigation Sidebar -->
-    <app-sidebar></app-sidebar>
+    <div class="app-body">
+      <!-- Left Navigation Sidebar -->
+      <app-sidebar></app-sidebar>
 
-    <!-- Main Content Area -->
-    <main class="main-content">
-      <div class="content-wrapper">
-        <router-outlet></router-outlet>
-      </div>
-    </main>
+      <!-- Main Content Area -->
+      <main class="main-content">
+        <div class="content-wrapper">
+          <router-outlet></router-outlet>
+        </div>
+      </main>
+    </div>
   </div>
-</div>
+} @else {
+  <main class="login-wrapper-shell">
+    <router-outlet></router-outlet>
+  </main>
+}
 
 <!-- Global Toast Notification Container -->
 <app-toast-notification></app-toast-notification>

@@ -1,0 +1,22 @@
+<div class="unauthorized-wrapper fade-in">
+  <div class="card unauthorized-card">
+    <div class="unauthorized-icon-container">
+      <!-- Shield Lock SVG Icon -->
+      <svg class="unauthorized-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+        <rect x="9" y="11" width="6" height="5" rx="1" />
+        <path d="M12 11V9a2 2 0 1 1 4 0v2" />
+      </svg>
+    </div>
+    
+    <h1 class="unauthorized-title">Access Denied</h1>
+    <p class="unauthorized-message">
+      You do not have the required security clearances or administrative roles to view this resource. 
+      Please contact your system administrator if you believe this is an error.
+    </p>
+
+    <div class="unauthorized-actions">
+      <a routerLink="/dashboard" class="btn btn-primary">Return to Dashboard</a>
+    </div>
+  </div>
+</div>

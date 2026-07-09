@@ -6,6 +6,8 @@ import { ToastService } from '../../../services/toast.service';
 import { LoadingSpinner } from '../../../components/loading-spinner/loading-spinner';
 import { ConfirmDialog } from '../../../components/confirm-dialog/confirm-dialog';
 
+import { AuthService } from '../../../services/auth.service';
+
 @Component({
   selector: 'app-customer-list',
   imports: [RouterLink, LoadingSpinner, ConfirmDialog],
@@ -33,7 +35,8 @@ export class CustomerListComponent implements OnInit {
 
   constructor(
     private customerService: CustomerService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {

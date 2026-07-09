@@ -8,10 +8,12 @@ import { TransferComponent } from './pages/transactions/transfer/transfer';
 import { DashboardComponent } from './pages/dashboard/dashboard';
 import { LoginComponent } from './pages/login/login';
 import { authGuard } from './guards/auth.guard';
+import { UnauthorizedComponent } from './pages/unauthorized/unauthorized';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
+  { path: 'unauthorized', component: UnauthorizedComponent, canActivate: [authGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'customers', component: CustomerListComponent, canActivate: [authGuard] },
   { path: 'customers/new', component: CustomerFormComponent, canActivate: [authGuard] },

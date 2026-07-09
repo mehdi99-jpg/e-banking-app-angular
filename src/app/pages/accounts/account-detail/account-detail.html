@@ -176,21 +176,23 @@
       </div>
 
       <!-- Right side: Quick actions -->
-      <div class="details-right">
-        <div class="card actions-card">
-          <h3 class="card-title">Quick Actions</h3>
-          <p class="actions-subtitle">Perform instant banking operations on this account.</p>
-          
-          <div class="actions-buttons-vertical">
-            <a routerLink="/transactions/debit-credit" class="btn btn-primary btn-block">
-              Debit / Credit Account
-            </a>
-            <a routerLink="/transactions/transfer" class="btn btn-outline btn-block">
-              Transfer Funds
-            </a>
+      @if (authService.isAdmin()) {
+        <div class="details-right">
+          <div class="card actions-card">
+            <h3 class="card-title">Quick Actions</h3>
+            <p class="actions-subtitle">Perform instant banking operations on this account.</p>
+            
+            <div class="actions-buttons-vertical">
+              <a routerLink="/transactions/debit-credit" class="btn btn-primary btn-block">
+                Debit / Credit Account
+              </a>
+              <a routerLink="/transactions/transfer" class="btn btn-outline btn-block">
+                Transfer Funds
+              </a>
+            </div>
           </div>
         </div>
-      </div>
+      }
     </div>
   }
 </div>

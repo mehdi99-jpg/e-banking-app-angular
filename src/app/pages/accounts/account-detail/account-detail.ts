@@ -6,6 +6,7 @@ import { AccountHistory } from '../../../models/account-history.model';
 import { AccountService } from '../../../services/account.service';
 import { ToastService } from '../../../services/toast.service';
 import { LoadingSpinner } from '../../../components/loading-spinner/loading-spinner';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-account-detail',
@@ -26,7 +27,8 @@ export class AccountDetailComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private accountService: AccountService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    public authService: AuthService
   ) {}
 
   ngOnInit(): void {

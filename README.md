@@ -1,8 +1,11 @@
-# Digital Banking Application (Frontend)
+# Digital Banking Application Frontend
 
 Developed by **HYNDI ELMEHDI**
 
-A clean, modern, and high-performance Digital Banking Frontend built on top of Angular 21 and styled with a custom CSS Design System. The application features real-time client-side rendering (SPA), reactive form validations, loading states, a toast notification system, and fully responsive layouts.
+A clean, modern, and high-performance Digital Banking Frontend built on top of Angular 21 and styled with a custom CSS Design System. The application features real-time client-side rendering (SPA), secure JWT authentication guards, reactive form validations, loading states, a toast notification system, an interactive AI chatbot interface, and fully responsive layouts.
+
+The backend service corresponding to this frontend is available in the following GitHub repository:
+https://github.com/mehdi99-jpg/full-stack-java-angular-banking-app-powered-by-ai
 
 ---
 
@@ -55,74 +58,54 @@ src/
 └── styles.css                 # Brand Design System Tokens
 ```
 
-### Architectural Layout Diagram
+### Architectural Layout and Workflow
 
-```mermaid
-graph TD
-    UI[App Shell Component] --> Sidebar[Sidebar Component]
-    UI --> Navbar[Navbar Component]
-    UI --> PageRouter[Router Outlet]
-    
-    PageRouter --> Dashboard[Dashboard Page]
-    PageRouter --> Customers[Customer Management]
-    PageRouter --> Accounts[Account Directory]
-    PageRouter --> Transactions[Financial Operations]
+The application is structured as a Single Page Application (SPA) using Angular. The user interface communicates with the backend REST APIs using Angular Services. 
 
-    subgraph service_layer ["Service Layer (API Communication)"]
-        Customers --> CustService[CustomerService]
-        Accounts --> AccService[AccountService]
-        Transactions --> AccService
-    end
-
-    subgraph core_config ["Core Configuration (Environment)"]
-        CustService --> Env[environments.ts]
-        AccService --> Env
-    end
-    
-    subgraph data_models ["Data Models (Structs & Enums)"]
-        CustService --> Models["Customer / BankAccount / Transaction Models"]
-        AccService --> Models
-    end
-
-    subgraph utilities ["Utilities (Reusable)"]
-        Pages[All Pages] --> Spinner[LoadingSpinner Component]
-        Pages --> Dialog[ConfirmDialog Component]
-        Pages --> Toast[ToastService / ToastNotification]
-    end
-```
+The application workflow operates as follows:
+1. **User Authentication**: The entry point is the login view, which authenticates credentials against the backend authentication API. Upon a successful login, a JSON Web Token (JWT) is stored securely in the browser.
+2. **Access Control**: Angular Route Guards intercept navigation events to verify the presence and expiration of the JWT before rendering protected dashboard views.
+3. **Data Retrieval and API Calls**: Dashboard pages load dynamic data by subscribing to custom services (such as CustomerService and AccountService). These services communicate with the backend via HTTP clients, automatically appending the JWT to the authorization headers.
+4. **UI Updates & Utility Components**: During asynchronous API calls, a global LoadingSpinner component is displayed. Responses trigger toast notifications (success/error alerts), and critical actions prompt modal confirm dialogs.
+5. **Interactive AI Assistant**: Users can interact with a floating chat window that sends natural language queries to the backend's Spring AI controller. The status indicator dynamically reflects connection state, and the viewport adapts to support minimized and maximized layouts.
 
 ---
 
 ## App Workflows & Features
 
-The digital banking dashboard encompasses five primary workflows, all fully integrated:
+The digital banking dashboard encompasses six primary workflows:
 
 ### 1. Unified Dashboard Insights
-- Displays financial telemetry (total customers, active bank accounts, total savings, and total overdraft limits).
-- Lists quick shortcuts for initiating debits, credits, or transfers.
-- Provides a clean overview of the banking application's distribution.
+* Displays financial telemetry (total customers, active bank accounts, total savings, and total overdraft limits).
+* Lists quick shortcuts for initiating debits, credits, or transfers.
+* Provides a clean overview of the banking application's distribution.
 
 ### 2. Customer Management (CRUD)
-- **Retrieve**: Clean table representation containing customer identifiers, names, and contact details.
-- **Search**: Integrated query filter to retrieve specific clients.
-- **Create**: Add a new customer profile using dynamic reactive validations.
-- **Update**: Pre-filled update forms to modify profile attributes.
-- **Delete**: Protected action with an interactive Confirm Dialog before invoking remote API calls.
+* **Retrieve**: Clean table representation containing customer identifiers, names, and contact details.
+* **Search**: Integrated query filter to retrieve specific clients.
+* **Create**: Add a new customer profile using dynamic reactive validations.
+* **Update**: Pre-filled update forms to modify profile attributes.
+* **Delete**: Protected action with an interactive Confirm Dialog before invoking remote API calls.
 
 ### 3. Bank Account Directory
-- Divided into Current and Saving accounts, displayed as visual cards.
-- Supports card badge colors mapping to the account status (CREATED, ACTIVATED, SUSPENDED).
-- Clicking on any account redirects to the Account Detail view.
+* Divided into Current and Saving accounts, displayed as visual cards.
+* Supports card badge colors mapping to the account status (CREATED, ACTIVATED, SUSPENDED).
+* Clicking on any account redirects to the Account Detail view.
 
 ### 4. Account Details & Paginated Transaction History
-- Showcases detailed account summaries, including creation date, balance, and metadata (overdraft or interest rate).
-- Renders an interactive transaction ledger (Debit/Credit indicators).
-- **Pagination**: Supports dynamically requesting historical logs from the API with options for page size (5, 10, 20 items).
+* Showcases detailed account summaries, including creation date, balance, and metadata (overdraft or interest rate).
+* Renders an interactive transaction ledger (Debit/Credit indicators).
+* **Pagination**: Supports dynamically requesting historical logs from the API with options for page size (5, 10, 20 items).
 
 ### 5. Financial Operations
-- Forms to submit Debit or Credit requests against account IDs.
-- **Transfers**: Inter-account wire transfers supporting validation of source and destination accounts.
-- Built-in error handlers mapping failure outputs from API gateways to client toast notifications.
+* Forms to submit Debit or Credit requests against account IDs.
+* **Transfers**: Inter-account wire transfers supporting validation of source and destination accounts.
+* Built-in error handlers mapping failure outputs from API gateways to client toast notifications.
+
+### 6. Interactive Chatbot Interface
+* Floating chatbot UI with a minimized/expanded layout.
+* Integrated with backend Spring AI endpoints to query the database using Llama 3.3.
+* Interactive status indicators showing the assistant's online/offline availability.
 
 ---
 
@@ -167,14 +150,18 @@ Here are snapshots of the application UI:
 | --- | --- | --- |
 | ![Credit & Debit Form](snapshots/credit-debit-acc.png) | ![Credit & Debit verification](snapshots/credit-debit-verification.png) | ![Transfer](snapshots/transaction-source-to-destination.png) |
 
+### 5. Interactive AI Chatbot
+| Chatbot Interface View 1 | Chatbot Interface View 2 | Chatbot Interface View 3 |
+| --- | --- | --- |
+| ![Chatbot Interface View 1](snapshots/sample-1-chatbot.png) | ![Chatbot Interface View 2](snapshots/sample-2-chatbot.png) | ![Chatbot Interface View 3](snapshots/sample-3-chatbot.png) |
+
 ---
 
 ## Development & Execution Guide
 
 ### Prerequisites
-- Node.js (v18+)
-- NPM (v9+)
-- Angular CLI installed globally (`npm i -g @angular/cli`)
+* Node.js (v18+)
+* NPM (v9+)
 
 ### Getting Started
 
